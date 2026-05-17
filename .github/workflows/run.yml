@@ -2,7 +2,7 @@ name: lngSpider
 
 on:
   schedule:
-    - cron: '47 1 * * *'
+    - cron: '47 7 * * *'
 
   workflow_dispatch:
 
