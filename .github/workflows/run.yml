@@ -2,7 +2,7 @@ name: energyPriceSpider
 
 on:
   schedule:
-    - cron: '47 7 * * *'
+    - cron: '18 9 * * *'
 
   workflow_dispatch:
 
