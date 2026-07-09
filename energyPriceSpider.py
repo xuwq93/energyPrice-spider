@@ -1,24 +1,30 @@
 import requests
 import csv
 import os
+import json
 from datetime import datetime
 import time
 from urllib.parse import quote
 
+
 # 当前时间
 time_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
 
 # GBK urlencode
 def gbk_quote(s):
     return quote(s.encode("gbk"))
 
+
 # 当前时间戳
 timestamp = int(time.time() * 1000)
 
+
 # time 参数
 time_param = quote(
-    " where  DATE_FORMAT(END_DATE,'%Y-%m-%d') >= '-0002-11-30'"
+    " where DATE_FORMAT(END_DATE,'%Y-%m-%d') >= '-0002-11-30'"
 )
+
 
 # CCTD接口
 cctd_url = (
@@ -34,6 +40,7 @@ cctd_url = (
     "&extra_search="
     f"&_={timestamp}"
 )
+
 
 # 配置接口
 urls = [
@@ -51,43 +58,89 @@ urls = [
     }
 ]
 
-file_exists = os.path.exists("data.csv")
 
-# 超过100行时清空数据，只保留header
+csv_file = "data.csv"
+
+
+# 文件是否存在
+file_exists = os.path.exists(csv_file)
+
+
+# 超过100行清理，只保留表头
 if file_exists:
-    with open("data.csv", "r", encoding="utf-8") as f:
+    with open(csv_file, "r", encoding="utf-8") as f:
         rows = list(csv.reader(f))
 
     if len(rows) >= 100:
-        with open("data.csv", "w", newline="", encoding="utf-8") as f:
+        with open(csv_file, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
-            writer.writerow(rows[0])  # 只保留header
+            writer.writerow(rows[0])
 
-with open("data.csv", "a", newline="", encoding="utf-8") as f:
+
+# 写入CSV
+with open(csv_file, "a", newline="", encoding="utf-8") as f:
+
     writer = csv.writer(f)
 
+    # 新文件写header
     if not file_exists:
-        writer.writerow(["datetime", "type", "data"])
+        writer.writerow([
+            "datetime",
+            "type",
+            "data"
+        ])
+
 
     for item in urls:
-        try:
-            response = requests.get(item["url"], timeout=30)
 
-            print(response.url)
+        try:
+            print("请求:", item["url"])
+
+            response = requests.get(
+                item["url"],
+                timeout=30,
+                headers={
+                    "User-Agent": "Mozilla/5.0"
+                }
+            )
+
 
             response.raise_for_status()
 
-            data = response.json()
+
+            # 尝试解析JSON
+            try:
+                data = response.json()
+
+            except Exception:
+                print("返回不是JSON:")
+                print(response.text[:500])
+                continue
+
 
             print(f"{item['type']} 获取成功")
+
+
+            # 关键修改：
+            # Python对象 -> 标准JSON字符串
+            json_data = json.dumps(
+                data,
+                ensure_ascii=False,
+                separators=(",", ":")
+            )
+
 
             writer.writerow([
                 time_str,
                 item["type"],
-                str(data)
+                json_data
             ])
 
+
         except Exception as e:
-            print(f"{item['type']} 获取失败: {e}")
+            print(
+                f"{item['type']} 获取失败: {e}"
+            )
+
 
 print("保存完成")
