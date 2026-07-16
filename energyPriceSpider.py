@@ -53,15 +53,18 @@ urls = [
 
 file_exists = os.path.exists("data.csv")
 
-# 超过100行时清空数据，只保留header
+# 超过100行时，删除最旧数据，保留最新100行
 if file_exists:
     with open("data.csv", "r", encoding="utf-8") as f:
         rows = list(csv.reader(f))
 
     if len(rows) >= 100:
+        # 保留header + 最新96行数据
+        rows = [rows[0]] + rows[-96:]
+
         with open("data.csv", "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
-            writer.writerow(rows[0])  # 只保留header
+            writer.writerows(rows)
 
 with open("data.csv", "a", newline="", encoding="utf-8") as f:
     writer = csv.writer(f)
