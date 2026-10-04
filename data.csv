@@ -97,3 +97,5 @@ datetime,type,data
 2026-10-02 15:51:04,中国汽柴油批发价格,"{'BASEPRICE_diesel': '9321', 'BASEPRICE_petrol': '10666', 'DATA_diesel': '2026-09-29', 'DATA_petrol': '2026-09-29'}"
 2026-10-03 14:19:37,中国LNG出厂价格（全国）,"{'DATA': '2026-09-30', 'BASEPRICE': '6287'}"
 2026-10-03 14:19:37,中国汽柴油批发价格,"{'BASEPRICE_diesel': '9321', 'BASEPRICE_petrol': '10666', 'DATA_diesel': '2026-09-29', 'DATA_petrol': '2026-09-29'}"
+2026-10-04 14:48:26,中国LNG出厂价格（全国）,"{'DATA': '', 'BASEPRICE': ''}"
+2026-10-04 14:48:26,中国汽柴油批发价格,"{'BASEPRICE_diesel': '9321', 'BASEPRICE_petrol': '10666', 'DATA_diesel': '2026-09-29', 'DATA_petrol': '2026-09-29'}"
